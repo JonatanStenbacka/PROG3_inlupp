@@ -1,27 +1,23 @@
 #include "GameEngine.h"
 
-GameEngine::~GameEngine() {
+GameEngine::GameEngine() {
 	fps = 30;
 }
 
 // Constructor that takes the max fps as a parameter
-GameEngine::~GameEngine(int fps) {
+GameEngine::GameEngine(int fps) {
 	setFPS(fps);
 	setWindowSize(800, 600);
 }
 
 // Constructor that takes the max fps and the widht and hieght of the rendered window
-GameEngine::~GameEngine(int fps, int width, int height) {
+GameEngine::GameEngine(int fps, int width, int height) {
 	setFPS(fps);
 	setWindowSize(width, height);
 }
 
-/* Enligt Visual Studio så får man inte ha några argument/parametrar i konstruktorer,
- * vilket känns logiskt eftersom man väl inte anropa konstruktorer i koden i programmet?
- * De anropas ju bara helt enkelt när ett objekt tas bort. Man kan inte heller ha fler
- * än en konstruktor enligt Visual, vilket går i linje med ovanstående eftersom att den
- * den enda konstruktorn som isåfall ska finnas är ~GameEngine(void)/~GameEngine();
- */
+// Simple destructor, we will probably need to adjust this later
+GameEngine::~GameEngine(){}
 
 // Set a new fps
 void GameEngine::setFPS(int newFPS) {
