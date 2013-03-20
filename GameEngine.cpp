@@ -1,7 +1,7 @@
 #include "GameEngine.h"
 
 GameEngine::~GameEngine(){
-	fps = 29;
+	fps = 30;
 }
 
 // Constructor that takes the max fps as a parameter
