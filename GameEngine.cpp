@@ -33,11 +33,13 @@ void GameEngine::setFPS(int newFPS) {
 }
 
 // Set window width and height
-void GameEngine::setWindowSize(int w, int h) { /* Konsekventhet: I destruktorn har vi "int width" och
-											    * "int height" som parametrar, men i denna funktion 
-												* så har vi "int w", och "int h", trots att vi egentligen 
-												* syftar på samma saker. Så hur ska vi ha det? :)
-												*/
+void GameEngine::setWindowSize(int w, int h) {
+
+	/* Konsekventhet: I destruktorn har vi "int width" och
+	 * "int height" som parametrar, men i denna funktion 
+	 * så har vi "int w", och "int h", trots att vi egentligen 
+	 * syftar på samma saker. Så hur ska vi ha det? :)
+	 */
 
 	/* Max window size is 800 width and 600 height, if the supplied values are higher than
 	 * this, then we force 800x600
