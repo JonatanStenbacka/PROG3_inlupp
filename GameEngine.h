@@ -6,6 +6,7 @@ class GameEngine {
 		~GameEngine();
 		~GameEngine(int fps);
 		~GameEngine(int fps, int width, int height);
+		void setWindowSize(int w, int h);
 		void setFPS(int newFPS);
 
 	private:
