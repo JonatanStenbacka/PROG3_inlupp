@@ -15,7 +15,7 @@ GameEngine::GameEngine(int fps, int width, int height) {
 }
 
 // Simple destructor, we will probably need to adjust this later
-GameEngine::~GameEngine(){
+GameEngine::~GameEngine() {
     // TODO: Make sure to unload all SDL stuff here!
 }
 

@@ -1,7 +1,12 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#ifdef WIN32
+#include <SDL_image.h>
+#else
 #include <SDL/SDL_image.h>
+#endif
+
 #include <string>
 
 class Image {

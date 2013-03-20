@@ -1,6 +1,11 @@
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
+
+#ifdef WIN32
+#include <SDL.h>
+#else
 #include <SDL/SDL.h>
+#endif
 
 class GameEngine {
 	private:
