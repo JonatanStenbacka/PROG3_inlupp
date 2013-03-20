@@ -7,9 +7,7 @@
 class Image{
 	public:
 		Image();
-		Image(std::string filename, bool transparent_background){
-		image = IMG_Load(filename);
-		}
+		Image(std::string filename, bool transparent_background);
 		~Image();
 	private:
 		SDL_Surface * image;
