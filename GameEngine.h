@@ -10,6 +10,7 @@ class GameEngine {
 
 	private:
 		int fps;
+		int windowWidth, windowHeight;
 };
 
 #endif
