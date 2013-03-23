@@ -2,9 +2,8 @@
 #define SPRITE_H
 
 class Sprite {
-    public:
-	    virtual ~Sprite();
+	public:
+		virtual ~Sprite();
 };
 
 #endif
-

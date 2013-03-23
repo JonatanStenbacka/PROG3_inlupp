@@ -1,6 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+// If we are running something other than Windows, SDL_image is probably at SDL/SDL_image.h
 #ifdef WIN32
 #include <SDL_image.h>
 #else
