@@ -8,21 +8,16 @@ const int GameEngine::DEFAULT_WINDOW_HEIGHT = 600;
 // Constructor that takes game fps and width/height for the main window
 GameEngine::GameEngine(int fps, int width, int height) {
 	std::cout << "Engine: setting up..." << std::endl;
-	
+
 	// The engine isn't running yet
+	initialized = false;
 	running = false;
 
 	// Set FPS
 	setFPS(fps);
 
-	// Set up SDL screen surface
-	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-		std::cerr << "Engine: ERROR! Cannot initialize SDL! Exiting..." << std::endl;
-		exit(-1);
-	}
-
 	setWindowSize(width, height);
-	
+
 	std::cout << "Engine: done setting up" << std::endl;
 }
 
@@ -33,44 +28,96 @@ GameEngine::~GameEngine() {
 
 // Initializes the engine
 void GameEngine::init() {
-	initialized = true;
-}
+	if (running) {
+		std::cout << "Engine: WARNING! Engine is currently running, cannot initialize!" << std::endl;
 
-// Engine main loop. When this is called, the game starts
-void GameEngine::run() {
-	running = true;
-	stop = false;
-	
-	// Set FPS-related variables
-	const int tickInterval = 1000 / fps;
-	Uint32 nextTick;
-	int delay;
-
-	while (!stop) {
-		nextTick = SDL_GetTicks() + tickInterval;
-
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT)
-				stop = true;
+	} else {
+		std::cout << "Engine: initializing..." << std::endl;
+		
+		// Set up SDL screen surface
+		if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+			std::cerr << "Engine: ERROR! Cannot initialize SDL! Exiting..." << std::endl;
+			exit(-1);
 		}
 
-		// Regulate FPS
-		delay = nextTick - SDL_GetTicks();
-		if (delay > 0)
-			SDL_Delay(delay);
+		// Set up screen
+		screen = SDL_SetVideoMode(windowWidth, windowHeight, 32,
+		SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
 
- 		// Update screen buffer
+		if (screen == NULL) {
+			std::cerr << "Engine: ERROR! Cannot create screen!" << std::endl;
+			exit(-1);
+		}
+
+		Uint32 bgColor = SDL_MapRGB(screen->format, 0, 0, 0);
+		SDL_FillRect(screen, NULL, bgColor);
 		SDL_Flip(screen);
-	}
 
-	running = false;
-	SDL_Quit();
-	stopEngine();
+		initialized = true;
+		std::cout << "Engine: done!" << std::endl;
+	}
+}
+
+// Engine main loop. When this is called, the engine "starts"
+void GameEngine::run() {
+	if (!initialized) {
+		std::cerr << "Engine: ERROR! Couldn't run because engine hasn't been initialized" << std::endl;
+
+	} else if (running) {
+		std::cout << "Engine: WARNING! Engine is already running!" << std::endl;
+
+	} else {
+		std::cout << "Engine: running..." << std::endl;
+
+		running = true;
+		bool quit = false;
+
+		// Set FPS-related variables
+		const int tickInterval = 1000 / fps;
+		Uint32 nextTick;
+		int delay;
+
+		while (!quit) {
+			nextTick = SDL_GetTicks() + tickInterval;
+
+			while (SDL_PollEvent(&event)) {
+				if (event.type == SDL_QUIT) {
+					quit = true;
+					break;
+				}
+			}
+
+			// Regulate FPS
+			delay = nextTick - SDL_GetTicks();
+			if (delay > 0)
+				SDL_Delay(delay);
+
+	 		// Update screen buffer
+			SDL_Flip(screen);
+		}
+
+		stop();
+	}
 }
 
 // Stops the engine
-void GameEngine::stopEngine() {
-	initialized = false;
+void GameEngine::stop() {
+	if (!initialized) {
+		std::cout << "Engine: WARNING! Cannot stop, engine hasn't been initialized" << std::endl;
+
+	} else if (!running) {
+		std::cout << "Engine: WARNING! Cannot stop, engine hasn't been started" << std::endl;	
+
+	} else {
+		std::cout << "Engine: stopping..." << std::endl;
+
+		SDL_Quit();
+
+		running = false;
+		initialized = false;
+
+		std::cout << "Engine: done, now stopped. Run .init() followed by .run() to restart" << std::endl;
+	}
 }
 
 void GameEngine::setFPS(int newFPS) {
@@ -99,44 +146,31 @@ void GameEngine::setWindowSize(int width, int height) {
 	if (running) {
 		// The engine is currently running! Changing of size not permitted!
 		std::cout << "Engine: WARNING! Tried to change screen size while engine was running" << std::endl;
-		return;
-	}
-
-	// Check and set width
-	if (width < 1) {
-		std::cout << "Engine: WARNING! Too low width set (" << width << "), defaulting to "
-			<< DEFAULT_WINDOW_WIDTH << " pixels instead" << std::endl;
-		windowWidth = DEFAULT_WINDOW_WIDTH;
-
+		
 	} else {
-		windowWidth = width;
+		// Check and set width
+		if (width < 1) {
+			std::cout << "Engine: WARNING! Too low width set (" << width << "), defaulting to "
+				<< DEFAULT_WINDOW_WIDTH << " pixels instead" << std::endl;
+			windowWidth = DEFAULT_WINDOW_WIDTH;
+
+		} else {
+			windowWidth = width;
+		}
+
+		// Check and set height
+		if (height < 1) {
+			std::cout << "Engine: WARNING! Too low height set (" << height << "), defaulting to "
+				<< DEFAULT_WINDOW_HEIGHT << " pixels instead" << std::endl;
+			windowHeight = DEFAULT_WINDOW_HEIGHT;
+
+		} else {
+			windowHeight = height;
+		}
 	}
-
-	// Check and set height
-	if (height < 1) {
-		std::cout << "Engine: WARNING! Too low height set (" << height << "), defaulting to "
-			<< DEFAULT_WINDOW_HEIGHT << " pixels instead" << std::endl;
-		windowHeight = DEFAULT_WINDOW_HEIGHT;
-
-	} else {
-		windowHeight = height;
-	}
-
-	screen = SDL_SetVideoMode(windowWidth, windowHeight, 32,
-		SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
-
-	if (screen == NULL) {
-		std::cerr << "Engine: ERROR! Cannot create screen!\n";
-		exit(-1);
-	}
-
-	// Set up screen
-	Uint32 bgColor = SDL_MapRGB(screen->format, 0, 0, 0);
-	SDL_FillRect(screen, NULL, bgColor);
-	SDL_Flip(screen);
 }
 
-// Set the title of the windows (with const char* param)
+// Set the title of the window (with const char* param)
 void GameEngine::setWindowTitle(const char* title) {
 	std::cout << "Engine: setting title to " << title << std::endl;
 	SDL_WM_SetCaption(title, title);

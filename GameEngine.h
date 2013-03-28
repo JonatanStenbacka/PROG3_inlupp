@@ -22,7 +22,6 @@ class GameEngine {
 		// Misc variables for the engine
 		bool initialized;
 		bool running;
-		bool stop;
 		static const int DEFAULT_FPS;
 		static const int DEFAULT_WINDOW_WIDTH;
 		static const int DEFAULT_WINDOW_HEIGHT;
@@ -38,7 +37,7 @@ class GameEngine {
 		~GameEngine();
 		void init();
 		void run();
-		void stopEngine();
+		void stop();
 		void setFPS(int newFPS);
 		void setWindowSize(int width, int height);
 		void setWindowTitle(const char*);
